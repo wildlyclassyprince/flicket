@@ -22,14 +22,27 @@ class documentRegistry extends Contract {
             score: studentScore,
         }
 
+        // Check if document exists
+        if (await this._docExists(ctx, document.id)) {
+            throw new Error(`document ${document.id} already exists`)
+        }
+
     };
     // Add document to registry
-    async addDoc(ctx, docID, docType, school, studentName, studentGrade, studentScore){    
+    async uploadDoc(ctx, docID, docType, school, studentName, studentGrade, studentScore){    
     };
     async getDoc(){}
-    async removeDoc(){}
+    async delDoc(){}
 
     // Helpers
+    async _docExists(ctx, docID){
+        const compositeKey = ctx.stub.createCompositeKey(docType, [id]);
+        const docBytes = await ctx.stub.getState(compositeKey);
+        return docBytes && docBytes.length > 0;
+    };
+
+    async _putDoc(){}
+    async _getDoc(){}
     async _getTxCreatorUID(){}
 }
 
