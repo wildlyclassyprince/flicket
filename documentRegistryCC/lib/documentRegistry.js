@@ -1,11 +1,14 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const docID = "document-1";
 const docType = "Certificate";
+const school = "Hard Knocks";
+const studentName = "Bell Bell";
 const studentGrade = "Amateur";
 const studentScore = "Passed";
 
-class documentRegistry extends Contract {
+class documentRegistryContract extends Contract {
     // Initialize
     async init(ctx, docID, docType, school, studentName, studentGrade, studentScore) {
         
@@ -16,7 +19,7 @@ class documentRegistry extends Contract {
         const document = {
             id: docID,
             type: docType,
-            school: this._getTxCreatorUID(),
+            school: school,
             name: studentName,
             grade: studentGrade,
             score: studentScore,
@@ -29,6 +32,7 @@ class documentRegistry extends Contract {
 
         // Add document
         await this._putDoc(ctx, document);
+        console.log(`Successfully entered ${document.id}`)
 
     };
     // Add document to registry
@@ -53,4 +57,4 @@ class documentRegistry extends Contract {
     async _getTxCreatorUID(){}
 }
 
-exports.module = documentRegistry;
+module.exports = documentRegistryContract;
