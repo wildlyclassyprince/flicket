@@ -19,8 +19,11 @@ class documentRegistryContract extends Contract {
             grade: "Merit",
         }
 
+        // Composite key
+        const compositeKey = ctx.stub.createCompositeKey(mockDoc.type, [mockDoc.id]);
+
         // Check if document exists
-        if (await this._docExists(ctx, mockDoc.id)) {
+        if (await this._docExists(ctx, compositeKey)) {
             throw new Error(`document ${mockDoc.id} already exists`)
         }
 
@@ -39,6 +42,16 @@ class documentRegistryContract extends Contract {
             grade: studentGrade,
             score: studentScore,
         }
+
+        // Composite key
+        const compositeKey = ctx.stub.createCompositeKey(document.type, [document.id]);
+        if (await this._docExists(ctx, compositeKey)) {
+            throw new Error(`document ${document.id} already exists`)
+        }
+
+        // Upload
+        await ctx.stub._putDoc(ctx, document)
+
     };
     async getDoc(){}
     async delDoc(){}
@@ -51,7 +64,7 @@ class documentRegistryContract extends Contract {
     };
 
     async _putDoc(ctx, document){
-        const compositeKey = ctx.stub.createCompositeKey(docType, [document.id]);
+        const compositeKey = ctx.stub.createCompositeKey(document.type, [document.id]);
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
     };
 
