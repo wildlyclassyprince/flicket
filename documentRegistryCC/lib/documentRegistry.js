@@ -23,7 +23,7 @@ class documentRegistryContract extends Contract {
         const compositeKey = ctx.stub.createCompositeKey(mockDoc.type, [mockDoc.id]);
 
         // Check if document exists
-        if (await this._docExists(ctx, compositeKey)) {
+        if (await this._docExists(compositeKey)) {
             throw new Error(`document ${mockDoc.id} already exists`)
         }
 
@@ -44,32 +44,54 @@ class documentRegistryContract extends Contract {
         }
 
         // Composite key
-        const compositeKey = ctx.stub.createCompositeKey(document.type, [document.id]);
-        if (await this._docExists(ctx, compositeKey)) {
+        if (await this._docExists(ctx, document.id)) {
             throw new Error(`document ${document.id} already exists`)
         }
 
         // Upload
-        await ctx.stub._putDoc(ctx, document)
+        await ctx.stub._putDoc(document)
 
     };
-    async getDoc(){}
-    async delDoc(){}
+
+    async readDoc(ctx, docID) {
+        const checkDoc = await ctx.stub._docExists(docID);
+        if (!checkDoc || checkDoc.length ===0) {
+            throw new Error(`document ${docID} does not exist`)
+        }
+
+        const document = await ctx.stub._getDoc(docID);
+
+        return document;
+    };
+
+    async removeDoc(ctx, docID){
+        await ctx.stub._delDoc(docID)
+    };
 
     // Helpers
     async _docExists(ctx, id){
-        const compositeKey = ctx.stub.createCompositeKey(docType, [id]);
+        const compositeKey = ctx.stub.createCompositeKey(docObjType, [id])
         const docBytes = await ctx.stub.getState(compositeKey);
         return docBytes && docBytes.length > 0;
     };
 
-    async _putDoc(ctx, document){
-        const compositeKey = ctx.stub.createCompositeKey(document.type, [document.id]);
+    async _putDoc(ctx, compositeKey, document){
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
     };
 
-    async _getDoc(){}
-    async _getTxCreatorUID(){}
+    async _getDoc(ctx, id){
+        const compositeKey = ctx.stub.createCompositeKey(docObjType, [id]);
+        const docBytes = await ctx.stub.getState(compositeKey);
+        if (!docBytes || docBytes.length === 0) {
+            throw new Error(`document ${id} does not exist`)
+        }
+        return JSON.parse(docBytes.toString());
+    };
+
+    async _delDoc(ctx, id){
+        const compositeKey = ctx.sub.createCompositeKey(docType, [id]);
+        await ctx.stub.deleteState(compositeKey);
+    };
 }
 
 module.exports = documentRegistryContract;
