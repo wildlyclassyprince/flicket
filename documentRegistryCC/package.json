@@ -1,0 +1,22 @@
+{
+  "name": "documentRegistryCC",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "package-chaincode-node start"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=5"
+  },
+  "dependencies": {
+    "fabric-contract-api":"^2.2.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
