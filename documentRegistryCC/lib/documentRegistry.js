@@ -7,7 +7,7 @@ class documentRegistryContract extends Contract {
     // Initialize
     async init(ctx) {
         
-        if (!ctx.clientIdentity.assertAttributeValue("init", "true")) {
+        if (!ctx.clientIdentity.assertAttributeValue("init", "true")){
             throw new Error(`you do not have permissions to initialize an account`)
         }
 
@@ -24,7 +24,7 @@ class documentRegistryContract extends Contract {
         const compositeKey = ctx.stub.createCompositeKey(docObjType, [mockDoc.id]);
 
         // Check if document exists
-        if (await this._docExists(compositeKey)) {
+        if (await this._docExists(compositeKey)){
             throw new Error(`document ${mockDoc.id} already exists`)
         }
 
@@ -44,7 +44,7 @@ class documentRegistryContract extends Contract {
         }
 
         // Composite key
-        if (await this._docExists(ctx, document.id)) {
+        if (await this._docExists(ctx, document.id)){
             throw new Error(`document ${document.id} already exists`)
         }
 
@@ -53,9 +53,9 @@ class documentRegistryContract extends Contract {
 
     };
 
-    async readDoc(ctx, docID) {
+    async readDoc(ctx, docID){
         const checkDoc = await ctx.stub._docExists(docID);
-        if (!checkDoc || checkDoc.length ===0) {
+        if (!checkDoc || checkDoc.length === 0) {
             throw new Error(`document ${docID} does not exist`)
         }
 
@@ -65,7 +65,7 @@ class documentRegistryContract extends Contract {
     };
 
     async removeDoc(ctx, docID){
-        await ctx.stub._delDoc(docID)
+        await ctx.stub._delDoc(docID);
     };
 
     // Helpers
