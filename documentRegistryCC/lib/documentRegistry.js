@@ -1,6 +1,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const docObjType = "Certificate";
 
 class documentRegistryContract extends Contract {
     // Initialize
@@ -20,7 +21,7 @@ class documentRegistryContract extends Contract {
         }
 
         // Composite key
-        const compositeKey = ctx.stub.createCompositeKey(mockDoc.type, [mockDoc.id]);
+        const compositeKey = ctx.stub.createCompositeKey(docObjType, [mockDoc.id]);
 
         // Check if document exists
         if (await this._docExists(compositeKey)) {
@@ -33,14 +34,13 @@ class documentRegistryContract extends Contract {
 
     };
     // Add document to registry
-    async uploadDoc(ctx, docID, docType, school, studentName, studentGrade, studentScore){
+    async uploadDoc(ctx, docID, docType, school, studentName, studentGrade){
         const document = {
             id: docID,
             type: docType,
             school: school,
             name: studentName,
             grade: studentGrade,
-            score: studentScore,
         }
 
         // Composite key
@@ -75,7 +75,8 @@ class documentRegistryContract extends Contract {
         return docBytes && docBytes.length > 0;
     };
 
-    async _putDoc(ctx, compositeKey, document){
+    async _putDoc(ctx, document){
+        const compositeKey = ctx.stub.createCompositeKey(docObjType, [document.id]);
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
     };
 
@@ -89,7 +90,7 @@ class documentRegistryContract extends Contract {
     };
 
     async _delDoc(ctx, id){
-        const compositeKey = ctx.sub.createCompositeKey(docType, [id]);
+        const compositeKey = ctx.sub.createCompositeKey(docObjType, [id]);
         await ctx.stub.deleteState(compositeKey);
     };
 }
