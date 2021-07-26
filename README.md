@@ -15,9 +15,21 @@ Navigate to the `test-network` folder:
 $ cd $HOME/go/src/github.com/hyperledger/fabric-samples/test-network
 ```
 
-Start the network:
+Kill any active or stale docker containers and remove previously generated artifacts:
+```bash
+$ ./network.sh down
+```
+
+Start the test network:
 ```bash
 $ ./network.sh up createChannel -ca -s couchdb
+```
+
+Setup `logspout` (optional):
+
+```bash
+$ cp ../commercial-paper/organization/digibank/configuration/cli/monitordocker.sh .
+$ ./monitordocker.sh net_test
 ```
 
 Export environment variables for `Org1MSP`:
@@ -46,20 +58,35 @@ Check if you are now able to run the `peer` command:
 ```bash
 $ peer version
 ```
+***
+
+### Package
 
 Create chaincode package:
+
 ```bash
 $ peer lifecycle chaincode package documentregistrycc.tar.gz --path ../chaincode/documentRegistryCC --lang node --label documentregistrycc_1.0
 ```
 
+***
+
+### Install
+
 Install package on `Org1` and `Org2` by running the same command on **both** terminal windows:
+
 ```bash
 $ peer lifecycle chaincode install documentregistrycc.tar.gz
 ```
+***
+
+### Approve
 
 Query and save chaincode package identifier. Do this on both terminal windows:
+
 ```bash
-$ export PACKAGE_ID=`peer lifecycle chaincode queryinstalled | awk 'NR==2{print $3}'`
+$ x=`peer lifecycle chaincode queryinstalled | awk 'NR==2{print $3}'`
+$ export PACKAGE_ID="${x%?}"
+
 ```
 
 We will be using the default endorsement policy, which requires a majority approval of 2 out of 2 organizations. So we will run the following command on both organizations to approve the chaincode definition:
