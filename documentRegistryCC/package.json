@@ -7,16 +7,16 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "package-chaincode-node start"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "engines": {
     "node": ">=12",
     "npm": ">=5"
   },
   "dependencies": {
-    "fabric-contract-api":"^2.2.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "fabric-contract-api": "^2.2.1"
+  }
 }
