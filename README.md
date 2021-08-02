@@ -5,16 +5,16 @@ A mock implementation of an academic document registry using Hyperledger Fabric.
 
 ## How-to
 
-Copy the chaincode folder `documentRegistryCC` into the `chaincode` folder:
-
-```bash
-$ cp -r documentRegistryCC/ $HOME/go/src/github.com/hyperledger/fabric-samples/chaincodes/
-```
-
 Navigate to the `test-network` folder:
 
 ```bash
 $ cd $HOME/go/src/github.com/hyperledger/fabric-samples/test-network
+```
+
+Copy the chaincode folder `documentRegistryCC` into the `chaincode` folder:
+
+```bash
+$ cp -r path-to-folder/documentRegistryCC/ ../chaincode/
 ```
 
 Kill any active or stale docker containers and remove previously generated artifacts:
