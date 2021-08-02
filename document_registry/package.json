@@ -1,0 +1,14 @@
+{
+  "name": "document_registry",
+  "version": "1.0.0",
+  "description": "Document registry",
+  "main": "registryChaincode.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "^2.2.1"
+  }
+}
