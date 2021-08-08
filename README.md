@@ -11,10 +11,10 @@ Navigate to the `test-network` folder:
 $ cd $HOME/go/src/github.com/hyperledger/fabric-samples/test-network
 ```
 
-Copy the chaincode folder `documentRegistryCC` into the `chaincode` folder:
+Copy the chaincode folder `registry_chaincode` into the `chaincode` folder:
 
 ```bash
-$ cp -r path-to-folder/documentRegistryCC/ ../chaincode/
+$ cp -r path-to-folder/registry_chaincode/ ../chaincode/
 ```
 
 Kill any active or stale docker containers and remove previously generated artifacts:
@@ -72,7 +72,7 @@ $ peer version
 Create chaincode package:
 
 ```bash
-$ peer lifecycle chaincode package documentregistrycc.tar.gz --path ../chaincode/documentRegistryCC --lang node --label documentregistrycc_1.0
+$ peer lifecycle chaincode package registryCC.tar.gz --path ../chaincode/registry_chaincode --lang node --label documentregistrycc_1.0
 ```
 
 ***
@@ -82,7 +82,7 @@ $ peer lifecycle chaincode package documentregistrycc.tar.gz --path ../chaincode
 Install package on `Org1` and `Org2` by running the same command on **both** terminal windows:
 
 ```bash
-$ peer lifecycle chaincode install documentregistrycc.tar.gz
+$ peer lifecycle chaincode install registryCC.tar.gz
 ```
 ***
 
@@ -100,13 +100,13 @@ $ echo $PACKAGE_ID
 We will be using the default endorsement policy, which requires a majority approval of 2 out of 2 organizations. So we will run the following command on both organizations to approve the chaincode definition:
 
 ```bash
-$ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name documentregistrycc --version 1.0 --package-id $PACKAGE_ID --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name registryCC --version 1.0 --package-id $PACKAGE_ID --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ```
 
 Now we need to ensure if the number of submitted approvals is sufficient. We will use the `peer lifecycle chaincode commitreadiness`, which has the same flags as the command for approving a chaincode to our organization, though we do not need the `package-id` flag:
 
 ```bash
-$ peer lifecycle chaincode checkcommitreadiness --channelID mychannel --name documentregistrycc --version 1.0 --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --output json
+$ peer lifecycle chaincode checkcommitreadiness --channelID mychannel --name registryCC --version 1.0 --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --output json
 ```
 
 ```bash
@@ -125,17 +125,17 @@ $ peer lifecycle chaincode checkcommitreadiness --channelID mychannel --name doc
 If approvals are sufficient, we can now commit the chaincode on both organizations:
 
 ```bash
-$ peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name documentregistrycc --version 1.0 --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+$ peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name registryCC --version 1.0 --sequence 1 --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 ```
 
 Confirm successful commit:
 
 ```bash
-$ peer lifecycle chaincode querycommitted --channelID mychannel --name documentregistrycc --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$ peer lifecycle chaincode querycommitted --channelID mychannel --name registryCC --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ```
 
 ```bash
-Committed chaincode definition for chaincode 'documentregistrycc' on channel 'mychannel':
+Committed chaincode definition for chaincode 'registryCC' on channel 'mychannel':
 Version: 1.0, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc, Approvals: [Org1MSP: true, Org2MSP: true]
 ```
 
@@ -146,7 +146,7 @@ Version: 1.0, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc, Ap
 Try to run `init()` function:
 
 ```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n documentregistrycc --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"init","Args":[]}'
+$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"put","Args":["doc","certificate"]}'
 ```
 
 ***
