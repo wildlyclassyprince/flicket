@@ -141,6 +141,20 @@ Version: 1.0, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc, Ap
 
 ***
 
+### Short Version
+
+The workflow above is bound to have you *pulling your hair* with typos and errors. To simplify things, use the following:
+
+```bash
+$ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0
+```
+
+It accomplishes the same goals as the longer workflow.
+
+Note, however, with this script you cannot define the `--label` flag because it is not available in version `2.x`. But, providing the `label` in the format `<chaincode-name>_<version-number>`is a standard requirement as of version `2.2`.
+
+***
+
 ### Invoke
 
 Try to run `init()` function:
