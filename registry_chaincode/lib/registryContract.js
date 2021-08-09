@@ -4,11 +4,11 @@ const { Contract } = require('fabric-contract-api');
 
 class RegistryContract extends Contract {
 
-    async put(ctx, key, value) {
+    async uploadDocument(ctx, key, value) {
         await ctx.stub.putState(key, Buffer.from(value));
     };
 
-    async get(ctx, key) {
+    async readDocument(ctx, key) {
         const value = await ctx.stub.getState(key);
 
         if (!value || value.length === 0) {
@@ -18,7 +18,7 @@ class RegistryContract extends Contract {
         return value.toString();
     };
 
-    async del(ctx, key) {
+    async deleteDocument(ctx, key) {
         await ctx.stub.deleteState(key);
     }
 }
