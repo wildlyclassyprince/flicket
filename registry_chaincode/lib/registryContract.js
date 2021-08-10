@@ -24,7 +24,12 @@ class RegistryContract extends Contract {
     }
 
     // Helpers
-    async _documentExists(ctx, id){}
+    async _documentExists(ctx, id){
+        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
+        const documentBytes = await ctx.stub.getState(compositeKey);
+
+        return documentBytes && documentBytes.length > 0;
+    }
     async _putDocument(ctx, document){}
     async _getDocument(ctx, id) {}
     async _delDocument(ctx, id) {}
