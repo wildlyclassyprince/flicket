@@ -20,18 +20,19 @@ class RegistryContract extends Contract {
         await this._putDocument(ctx, document);
     };
 
-    async readDocument(ctx, key) {
-        const value = await ctx.stub.getState(key);
-
-        if (!value || value.length === 0) {
-            throw new Error(`The asset ${key} does not exist`);
+    async readDocument(ctx, id) {
+        if (this._documentExists(ctx, document.id)) {
+            throw new Error(`this document ${document.id} does not exist`)
         }
 
-        return value.toString();
+        const document = await this._getDocument(ctx, id);
+
+        return document;
     };
 
-    async deleteDocument(ctx, key) {
-        await ctx.stub.deleteState(key);
+    async deleteDocument(ctx, id) {
+        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
+        await this._delDocument(ctx, compositeKey);
     }
 
     // Helpers
