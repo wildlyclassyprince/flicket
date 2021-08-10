@@ -1,68 +1,64 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
-const documentObjType = "Certificate";
 
 class RegistryContract extends Contract {
 
+    async initDocument(ctx) {
+        console.info("========== START: Initialize Ledger ==========");
+        const documents = [
+            {
+                id: "doc-1",
+                school: "Cranshaw College",
+                major: "Note Sticking",
+                name: "Grothendieck"
+            },
+            {
+                id: "doc-2",
+                school: "Salisbury College",
+                major: "Bean Counting",
+                name: "Erdos"
+            }
+        ];
+
+        for (let i=0; i < documents.length; i++) {
+            documents[i].docType = "certificate";
+            await this._putDocument(ctx, documents[i]);
+            console.info("Added --->", documents[i].id);
+        }
+
+        console.info("========== END: Initialize Ledger ==========")
+    };
+
     async uploadDocument(ctx, id, school, major, name) {
-        let document = {
+        console.log("========== START: uploadDocument ==========");
+        const document = {
             id: id,
+            docType: "certificate",
             school: school,
             major: major,
             name: name
         };
 
-        if (this._documentExists(ctx, document.id)) {
-            throw new Error(`this document ${document.id} already exists`)
-        }
+        const compositeKey = ctx.stub.createCompositeKey(document.docType, [id]);
 
-        await this._putDocument(ctx, document);
+
+        console.log("========== END: uploadDocument ==========");
     };
 
     async readDocument(ctx, id) {
-        if (this._documentExists(ctx, document.id)) {
-            throw new Error(`this document ${document.id} does not exist`)
-        }
-
-        const document = await this._getDocument(ctx, id);
-
-        return document;
+        console.log("========== START: readDocument ==========");
+        // code goes here ...
+        console.info("========== END: readDocument ==========");
     };
 
     async deleteDocument(ctx, id) {
-        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
-        await this._delDocument(ctx, compositeKey);
+        console.info("========== START: deleteDocument ==========");
+        // code goes here ...
+        console.info("========== END: deleteDocument ==========");
     }
 
     // Helpers
-    async _documentExists(ctx, id){
-        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
-        const documentBytes = await ctx.stub.getState(compositeKey);
-
-        return documentBytes && documentBytes.length > 0;
-    }
-
-    async _putDocument(ctx, document){
-        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
-        await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
-    }
-    
-    async _getDocument(ctx, id) {
-        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
-        const documentBytes = await ctx.stub.getState(compositeKey);
-
-        if (!documentBytes || documentBytes.length === 0) {
-            throw new Error(`this document ${id} does not exist`)
-        }
-
-        return JSON.parse(documentBytes.toString());
-    }
-
-    async _delDocument(ctx, id) {
-        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
-        await ctx.stub.deleteState(compositeKey);
-    }
     
 }
 
