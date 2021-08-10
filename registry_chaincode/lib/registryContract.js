@@ -23,7 +23,8 @@ class RegistryContract extends Contract {
 
         for (let i=0; i < documents.length; i++) {
             documents[i].docType = "certificate";
-            await this._putDocument(ctx, documents[i]);
+            let compositeKey = this._createCompositeKey(ctx, documents[i].docType, documents[i].id);
+            await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(documents[i])));
             console.info("Added --->", documents[i].id);
         }
 
@@ -40,26 +41,49 @@ class RegistryContract extends Contract {
             name: name
         };
 
-        const compositeKey = ctx.stub.createCompositeKey(document.docType, [id]);
+        const compositeKey = this._createCompositeKey(ctx, document.docType, document.id);
+        console.log(`Document composite key: ${compositeKey}`);
 
+        await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
 
         console.log("========== END: uploadDocument ==========");
     };
 
-    async readDocument(ctx, id) {
+    async readDocument(ctx, objType, id) {
         console.log("========== START: readDocument ==========");
-        // code goes here ...
+        const compositeKey = this._createCompositeKey(ctx, objType, id);
+        console.log(`Document composite key: ${compositeKey}`);
+        const result = await ctx.stub.getState(compositeKey);
+        if (!result || result.length === 0) {
+            throw new Error(`this document ${id} does not exist`)
+        }
+
+        return result.toString();
+
         console.info("========== END: readDocument ==========");
     };
 
-    async deleteDocument(ctx, id) {
+    async deleteDocument(ctx, objType, id) {
         console.info("========== START: deleteDocument ==========");
-        // code goes here ...
+        const compositeKey = this._createCompositeKey(ctx, objType, id);
+        console.log(`Document composite key: ${compositeKey}`);
+        await ctx.stub.deleteState(compositeKey);
         console.info("========== END: deleteDocument ==========");
     }
 
     // Helpers
-    
+    _createCompositeKey(ctx, objType, id) {
+        if (!id || id === "") {
+            throw new Error('key should be non-empty string');
+        }
+
+        if (objType === "") {
+            return id;
+        }
+
+        return ctx.stub.createCompositeKey(objType, [id]);
+    }
+
 }
 
 module.exports = RegistryContract;
