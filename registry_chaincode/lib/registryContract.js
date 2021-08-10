@@ -5,8 +5,19 @@ const documentObjType = "Certificate";
 
 class RegistryContract extends Contract {
 
-    async uploadDocument(ctx, key, value) {
-        await ctx.stub.putState(key, Buffer.from(value));
+    async uploadDocument(ctx, id, school, major, name) {
+        let document = {
+            id: id,
+            school: school,
+            major: major,
+            name: name
+        };
+
+        if (this._documentExists(ctx, document.id)) {
+            throw new Error(`this document ${document.id} already exists`)
+        }
+
+        await this._putDocument(ctx, document);
     };
 
     async readDocument(ctx, key) {
