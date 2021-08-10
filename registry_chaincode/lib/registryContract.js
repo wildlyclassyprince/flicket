@@ -47,7 +47,17 @@ class RegistryContract extends Contract {
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
     }
     
-    async _getDocument(ctx, id) {}
+    async _getDocument(ctx, id) {
+        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
+        const documentBytes = await ctx.stub.getState(compositeKey);
+
+        if (!documentBytes || documentBytes.length === 0) {
+            throw new Error(`this document ${id} does not exist`)
+        }
+
+        return JSON.parse(documentBytes.toString());
+    }
+    
     async _delDocument(ctx, id) {}
     
 }
