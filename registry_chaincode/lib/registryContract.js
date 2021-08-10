@@ -57,8 +57,11 @@ class RegistryContract extends Contract {
 
         return JSON.parse(documentBytes.toString());
     }
-    
-    async _delDocument(ctx, id) {}
+
+    async _delDocument(ctx, id) {
+        const compositeKey = ctx.stub.createCompositeKey(documentObjType, [id]);
+        await ctx.stub.deleteState(compositeKey);
+    }
     
 }
 
