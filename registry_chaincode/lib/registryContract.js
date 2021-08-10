@@ -1,6 +1,7 @@
 'use strict';
 
 const { Contract } = require('fabric-contract-api');
+const documentObjType = "Certificate";
 
 class RegistryContract extends Contract {
 
@@ -21,6 +22,13 @@ class RegistryContract extends Contract {
     async deleteDocument(ctx, key) {
         await ctx.stub.deleteState(key);
     }
+
+    // Helpers
+    async _documentExists(ctx, id){}
+    async _putDocument(ctx, document){}
+    async _getDocument(ctx, id) {}
+    async _delDocument(ctx, id) {}
+    
 }
 
 module.exports = RegistryContract;
