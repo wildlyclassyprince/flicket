@@ -4,7 +4,7 @@ const { Contract } = require('fabric-contract-api');
 
 class RegistryContract extends Contract {
 
-    async initDocument(ctx) {
+    async initRegistry(ctx) {
         console.info("========== START: Initialize Ledger ==========");
         const documents = [
             {
@@ -23,9 +23,9 @@ class RegistryContract extends Contract {
 
         for (let i=0; i < documents.length; i++) {
             documents[i].docType = "certificate";
-            let compositeKey = this._createCompositeKey(ctx, documents[i].docType, documents[i].id);
+            let compositeKey = await this._createCompositeKey(ctx, documents[i].docType, documents[i].id);
             await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(documents[i])));
-            console.info("Added --->", documents[i].id);
+            console.info("Added --->", compositeKey);
         }
 
         console.info("========== END: Initialize Ledger ==========")
@@ -41,18 +41,16 @@ class RegistryContract extends Contract {
             name: name
         };
 
-        const compositeKey = this._createCompositeKey(ctx, document.docType, document.id);
-        console.log(`Document composite key: ${compositeKey}`);
+        const compositeKey = await this._createCompositeKey(ctx, document.docType, document.id);
 
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
 
         console.log("========== END: uploadDocument ==========");
     };
 
-    async readDocument(ctx, objType, id) {
+    async readDocument(ctx, objType="certificate", id) {
         console.log("========== START: readDocument ==========");
-        const compositeKey = this._createCompositeKey(ctx, objType, id);
-        console.log(`Document composite key: ${compositeKey}`);
+        const compositeKey = await this._createCompositeKey(ctx, objType, id);
         const result = await ctx.stub.getState(compositeKey);
         if (!result || result.length === 0) {
             throw new Error(`this document ${id} does not exist`)
@@ -63,18 +61,38 @@ class RegistryContract extends Contract {
         console.info("========== END: readDocument ==========");
     };
 
-    async deleteDocument(ctx, objType, id) {
+    async deleteDocument(ctx, objType="certificate", id) {
         console.info("========== START: deleteDocument ==========");
-        const compositeKey = this._createCompositeKey(ctx, objType, id);
-        console.log(`Document composite key: ${compositeKey}`);
+        const compositeKey = await this._createCompositeKey(ctx, objType, id);
         await ctx.stub.deleteState(compositeKey);
         console.info("========== END: deleteDocument ==========");
     }
 
+    // Read history of documents
+    async getHistory(ctx, objType="certificate", id) {
+        console.info("========== START: getHistory ==========");
+        const compositeKey = this._createCompositeKey(ctx, objType, id);
+        const iteratorPromise = ctx.stub.getHistoryForKey(compositeKey);
+
+        let history = [];
+        for await (const res of iteratorPromise) {
+            history.push({
+                txId: res.txId,
+                value: res.value.toString(),
+                isDelete: res.isDelete
+            });
+        }
+
+        return JSON.stringify({
+            id: id,
+            values: history
+        });
+    }
+
     // Helpers
-    async _createCompositeKey(ctx, objType, id) {
+    _createCompositeKey(ctx, objType, id) {
         if (!id || id === "") {
-            throw new Error('key should be non-empty string');
+            throw new Error('id should be a non-empty string')
         }
 
         if (objType === "") {
