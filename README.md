@@ -146,7 +146,7 @@ Version: 1.0, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc, Ap
 The workflow above is bound to have you *pulling your hair* with typos and errors. To simplify things, use the following:
 
 ```bash
-$ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0
+$ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0 -cci initRegistry
 ```
 
 It accomplishes the same goals as the longer workflow.
