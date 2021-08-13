@@ -72,7 +72,7 @@ class RegistryContract extends Contract {
     }
 
     // Helpers
-    _createCompositeKey(ctx, objType, id) {
+    async _createCompositeKey(ctx, objType, id) {
         if (!id || id === "") {
             throw new Error('key should be non-empty string');
         }
