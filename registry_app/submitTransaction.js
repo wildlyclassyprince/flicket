@@ -1,7 +1,7 @@
 'use strict';
 
 const { Wallets, Gateway } = require('fabric-network');
-cosnt _ = require('lodash');
+const _ = require('lodash');
 
 async function main() {
     const gateway = new Gateway();
