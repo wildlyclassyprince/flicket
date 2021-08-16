@@ -6,6 +6,14 @@
 npm init -y
 ```
 
+- Add dependencies
+
+```javascript
+"dependencies": {
+    "fabric-network": ">2.2.0"
+}
+```
+
 - Install
 
 ```bash
