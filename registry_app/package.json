@@ -1,0 +1,15 @@
+{
+  "name": "registry_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "addToWallet.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "fabric-network": "~2.2.8"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
