@@ -89,6 +89,28 @@ class RegistryContract extends Contract {
         });
     }
 
+    // Get all documents
+    async readAllDocuments(ctx) {
+        console.log("========== START: readDocumentFromRange ==========");
+        const startKey = "";
+        const endKey = "";
+        const results = [];
+        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+            const strValue = Buffer.from(value).toString('utf-8');
+            let doc;
+            try {
+                doc = JSON.parse(strValue);
+            } catch (err) {
+                console.log(err);
+                doc = strValue;
+            }
+            results.push({Key: key, Record: doc});
+        }
+        console.log(results);
+        return JSON.stringify(results);
+        console.log("========== END: readDocumentFromRange ==========");
+    }
+
     // Helpers
     _createCompositeKey(ctx, objType, id) {
         if (!id || id === "") {
