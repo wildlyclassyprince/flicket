@@ -32,7 +32,7 @@ class RegistryContract extends Contract {
     };
 
     async uploadDocument(ctx, id, school, major, name) {
-        console.log("========== START: uploadDocument ==========");
+        console.info("========== START: uploadDocument ==========");
         const document = {
             id: id,
             docType: "certificate",
@@ -45,11 +45,11 @@ class RegistryContract extends Contract {
 
         await ctx.stub.putState(compositeKey, Buffer.from(JSON.stringify(document)));
 
-        console.log("========== END: uploadDocument ==========");
+        console.info("========== END: uploadDocument ==========");
     };
 
     async readDocument(ctx, objType, id) {
-        console.log("========== START: readDocument ==========");
+        console.info("========== START: readDocument ==========");
         const compositeKey = await this._createCompositeKey(ctx, objType, id);
         const result = await ctx.stub.getState(compositeKey);
         if (!result || result.length === 0) {
@@ -91,24 +91,22 @@ class RegistryContract extends Contract {
 
     // Get all documents
     async readAllDocuments(ctx) {
-        console.log("========== START: readDocumentFromRange ==========");
         const startKey = "";
         const endKey = "";
-        const results = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
+        const allResults = [];
+        for await (const value of ctx.stub.getStateByRange(startKey, endKey)) {
             const strValue = Buffer.from(value).toString('utf-8');
-            let doc;
+            let record;
             try {
-                doc = JSON.parse(strValue);
+                record = JSON.parse(strValue);
             } catch (err) {
                 console.log(err);
-                doc = strValue;
+                record = strValue;
             }
-            results.push({Key: key, Record: doc});
+            allResults.push({ Key: key, Record: record});
         }
-        console.log(results);
-        return JSON.stringify(results);
-        console.log("========== END: readDocumentFromRange ==========");
+        console.info(allResults);
+        return JSON.stringify(allResults); // returns empty array
     }
 
     // Helpers
