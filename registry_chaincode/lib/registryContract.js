@@ -48,7 +48,7 @@ class RegistryContract extends Contract {
         console.log("========== END: uploadDocument ==========");
     };
 
-    async readDocument(ctx, objType="certificate", id) {
+    async readDocument(ctx, objType, id) {
         console.log("========== START: readDocument ==========");
         const compositeKey = await this._createCompositeKey(ctx, objType, id);
         const result = await ctx.stub.getState(compositeKey);
@@ -61,7 +61,7 @@ class RegistryContract extends Contract {
         console.info("========== END: readDocument ==========");
     };
 
-    async deleteDocument(ctx, objType="certificate", id) {
+    async deleteDocument(ctx, objType, id) {
         console.info("========== START: deleteDocument ==========");
         const compositeKey = await this._createCompositeKey(ctx, objType, id);
         await ctx.stub.deleteState(compositeKey);
@@ -69,7 +69,7 @@ class RegistryContract extends Contract {
     }
 
     // Read history of documents
-    async getHistory(ctx, objType="certificate", id) {
+    async getHistory(ctx, objType, id) {
         console.info("========== START: getHistory ==========");
         const compositeKey = this._createCompositeKey(ctx, objType, id);
         const iteratorPromise = ctx.stub.getHistoryForKey(compositeKey);
