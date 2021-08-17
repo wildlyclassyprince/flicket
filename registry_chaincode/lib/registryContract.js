@@ -61,6 +61,11 @@ class RegistryContract extends Contract {
         console.info("========== END: readDocument ==========");
     };
 
+    async readDocumentsByType(ctx, objType) {
+        const iteratorPromise = await ctx.stub.getStateByPartialCompositeKey(objType, []);
+        // handle StateQueryIteratorIterator object here ...
+    }
+
     async deleteDocument(ctx, objType, id) {
         console.info("========== START: deleteDocument ==========");
         const compositeKey = await this._createCompositeKey(ctx, objType, id);
