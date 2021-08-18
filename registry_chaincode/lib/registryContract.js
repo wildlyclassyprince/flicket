@@ -77,7 +77,7 @@ class RegistryContract extends Contract {
     async getHistory(ctx, objType, id) {
         console.info("========== START: getHistory ==========");
         const compositeKey = this._createCompositeKey(ctx, objType, id);
-        const iteratorPromise = ctx.stub.getHistoryForKey(compositeKey);
+        const iteratorPromise = ctx.stub.getHistoryForKey([compositeKey]);
 
         let history = [];
         for await (const res of iteratorPromise) {
