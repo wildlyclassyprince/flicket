@@ -58,12 +58,24 @@ class RegistryContract extends Contract {
 
         return result.toString();
 
-        console.info("========== END: readDocument ==========");
     };
 
     async readDocumentsByType(ctx, objType) {
-        const iteratorPromise = await ctx.stub.getStateByPartialCompositeKey(objType, []);
-        // handle StateQueryIteratorIterator object here ...
+        console.info("========== START: readDocumentByType ==========");
+        const iteratorPromise = ctx.stub.getStateByPartialCompositeKey(objType, []);
+        
+        let documents = [];
+
+        for await (const result of iteratorPromise) {
+            const splitKey = ctx.stub.splitCompositeKey(result.key);
+            documents.push({
+                objType: splitKey.objectType,
+                key: splitKey.attributes[0],
+                value: result.value.toString()
+            });
+        }
+
+        return JSON.stringify(documents);
     }
 
     async deleteDocument(ctx, objType, id) {
@@ -77,19 +89,21 @@ class RegistryContract extends Contract {
     async getHistory(ctx, objType, id) {
         console.info("========== START: getHistory ==========");
         const compositeKey = this._createCompositeKey(ctx, objType, id);
-        const iteratorPromise = ctx.stub.getHistoryForKey([compositeKey]);
+        const iteratorPromise = ctx.stub.getHistoryForKey(compositeKey);
 
         let history = [];
-        for await (const res of iteratorPromise) {
+
+        for await(const result of iteratorPromise) {
             history.push({
-                txId: res.txId,
-                value: res.value.toString(),
-                isDelete: res.isDelete
+                txId: result.txId,
+                value: result.value.toString(),
+                isDelete: result.isDelete
             });
         }
 
         return JSON.stringify({
-            id: id,
+            objType: objType,
+            docId: id,
             values: history
         });
     }
@@ -98,18 +112,17 @@ class RegistryContract extends Contract {
     async readAllDocuments(ctx) {
         const startKey = "";
         const endKey = "";
-        const allResults = [];
-        for await (const {key, value} of ctx.stub.getStateByRange(startKey, endKey)) {
-            const strValue = Buffer.from(value).toString('utf-8');
-            let record;
-            try {
-                record = JSON.parse(strValue);
-            } catch (err) {
-                console.log(err);
-                record = strValue;
-            }
-            allResults.push({ Key: key, Record: record});
+        const iteratorPromise = ctx.stub.getStateByRange(startKey, endKey);
+
+        let allResults = [];
+
+        for await (const result of iteratorPromise) {
+            allResults.push({
+                key: result.key,
+                value: result.value.toString()
+            });
         }
+        
         console.info(allResults);
         return JSON.stringify(allResults); // returns empty array
     }
