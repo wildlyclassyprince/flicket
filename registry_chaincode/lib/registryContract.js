@@ -110,8 +110,8 @@ class RegistryContract extends Contract {
 
     // Get all documents
     async readAllDocuments(ctx) {
-        const startKey = "";
-        const endKey = "";
+        const startKey = '';
+        const endKey = '';
         const iteratorPromise = ctx.stub.getStateByRange(startKey, endKey);
 
         let allResults = [];
@@ -119,10 +119,10 @@ class RegistryContract extends Contract {
         for await (const result of iteratorPromise) {
             allResults.push({
                 key: result.key,
-                value: result.value.toString()
-            });
+                value: result.value.toString('utf-8')
+            })
         }
-        
+
         console.info(allResults);
         return JSON.stringify(allResults); // returns empty array
     }
