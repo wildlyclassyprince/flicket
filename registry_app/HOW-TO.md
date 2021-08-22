@@ -6,7 +6,7 @@
 npm init -y
 ```
 
-- Add dependencies
+- Add dependencies (if not added in previous step)
 
 ```javascript
 "dependencies": {
