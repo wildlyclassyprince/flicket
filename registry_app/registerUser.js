@@ -44,7 +44,7 @@ async function main() {
             optional = JSON.parse(args[2]);
         }
 
-        let registrarRequest = {
+        let registerRequest = {
             enrollmentID: enrollmentID,
             enrollmentSecret: optional.secret || "",
             role: 'client',
