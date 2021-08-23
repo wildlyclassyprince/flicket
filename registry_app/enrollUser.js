@@ -30,6 +30,17 @@ async function main() {
             return;
         }
 
+        // Parse command-line arguments and compose an enrollment request:
+        const enrollmentID = args[1];
+        const enrollmentSecret = args[2];
+
+        let enrollmentRequest = {
+            enrollmentID: enrollmentID,
+            enroolmentSecret: enrollmentSecret,
+        };
+
+        //
+
     } catch (error) {
         console.error(`Failed to enroll user: ${error}`);
         process.exit(1);
