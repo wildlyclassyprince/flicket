@@ -6,6 +6,8 @@ const path = require('path');
 const FabricCAServices = require('fabric-ca-client');
 const { Wallets } = require('fabric-network');
 
+const testNetworkRoot = path.resolve(require('os').homedir(), 'go/src/github.com/hyperledger/fabric-samples/test-network');
+
 async function main() {
     try {
         // Get Fabric CA server URL - already defined in `test-network` connection profile
@@ -24,7 +26,7 @@ async function main() {
         // First check if the user already exists:
         const wallet = await Wallets.newFileSystemWallet('./wallet');
 
-        let identity = await wallet.orgNameWithoutDomain(identityLabel);
+        let identity = await wallet.get(identityLabel);
         if (identity) {
             console.log(`An identity for the ${identityLabel} user already exists in the wallet`);
             return;
@@ -36,7 +38,7 @@ async function main() {
 
         let enrollmentRequest = {
             enrollmentID: enrollmentID,
-            enroolmentSecret: enrollmentSecret,
+            enrollmentSecret: enrollmentSecret,
         };
 
         // Invoke `enroll` method and save the user identity in the wallet:
