@@ -9,6 +9,35 @@ const { Wallets, Gateway } = require('fabric-network');
 const testNetworkRoot = path.resolve(require('os').homedir(), 'go/src/github.com/hyperledger/fabric-samples/test-network');
 
 async function main() {
+    try {
+        const wallet = await Wallets.newFileSystemWallet('./wallet');
+
+        let args = process.argv.slice(2);
+
+        const registrarLabel = args[0];
+
+        let registrarIdentity = await wallet.get(registrarLabel);
+        if (!registrarIdentity) {
+            console.log(`An identity for the registrar user ${registrarLabel} does not exist in the wallet`);
+            console.log('Run the enrollUser.js application before retrying');
+            return;
+        }
+
+        // User registration
+        // First create 'FabricCAServices' object to interact with the Fabric CA server:
+        const orgName = registrarLabel.split('@')[1];
+        const orgNameWithoutDomain = orgName.split('.')[0];
+
+        let connectionProfile = JSON.parse(fs.readFileSync(path.join(testNetworkRoot, 'organizations/peerOrganizations', orgName, `/connection-${orgNameWithoutDomain}.json`), 'utf-8'));
+
+        const ca = new FabricCAServices(connectionProfile['certificateAuthorities'][`ca.${orgName}`].url);
+
+        
+
+    } catch (error) {
+        console.error(`Failed to register user: ${error}`);
+        process.exit(1);
+    }
 
 }
 
