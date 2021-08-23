@@ -32,6 +32,9 @@ async function main() {
 
         const ca = new FabricCAServices(connectionProfile['certificateAuthorities'][`ca.${orgName}`].url);
 
+        // Obtain registrar identity in the form or a 'User' object:
+        const provider = wallet.getProviderRegistry().getProvider(registrarIdentity.type);
+        const registrarUser = await provider.getUserContext(registrarIdentity, registrarLabel);
         
 
     } catch (error) {
