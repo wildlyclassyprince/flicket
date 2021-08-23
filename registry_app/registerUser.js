@@ -35,7 +35,23 @@ async function main() {
         // Obtain registrar identity in the form or a 'User' object:
         const provider = wallet.getProviderRegistry().getProvider(registrarIdentity.type);
         const registrarUser = await provider.getUserContext(registrarIdentity, registrarLabel);
-        
+
+        // Parse command-line arguments to extract the enrollment ID and a JSON object containing optional fields if provided:
+        const enrollmentID = args[1];
+
+        let optional = {};
+        if (args.length > 2) {
+            optional = JSON.parse(args[2]);
+        }
+
+        let registrarRequest = {
+            enrollmentID: enrollmentID,
+            enrollmentSecret: optional.secret || "",
+            role: 'client',
+        };
+
+        const secret = await ca.register(registerRequest, registrarUser);
+        console.log(`Successfully registered the user with the ${enrollmentID} enrollment ID and ${secret} enrollment secret`);
 
     } catch (error) {
         console.error(`Failed to register user: ${error}`);
