@@ -13,6 +13,7 @@ async function main() {
 
         const identityLabel = args[0];
         const orgName = identityLabel.split('@')[1];
+        console.info('Identity Label: ', identityLabel)
         const orgNameWithoutDomain = orgName.split('.')[0];
 
         let connectionProfile = JSON.parse(fs.readFileSync(path.join(testNetworkRoot, 'organizations/peerOrganizations', orgName, `/connection-${orgNameWithoutDomain}.json`), 'utf-8'));
@@ -20,6 +21,14 @@ async function main() {
         const ca = new FabricCAServices(connectionProfile['certificateAuthorities'][`ca.${orgName}`].url);
 
         // User enrollment
+        // First check if the user already exists:
+        const wallet = await Wallets.newFileSystemWallet('./wallet');
+
+        let identity = await wallet.orgNameWithoutDomain(identityLabel);
+        if (identity) {
+            console.log(`An identity for the ${identityLabel} user already exists in the wallet`);
+            return;
+        }
 
     } catch (error) {
         console.error(`Failed to enroll user: ${error}`);
