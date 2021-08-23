@@ -39,7 +39,20 @@ async function main() {
             enroolmentSecret: enrollmentSecret,
         };
 
-        //
+        // Invoke `enroll` method and save the user identity in the wallet:
+        const enrollment = await ca.enroll(enrollmentRequest);
+
+        const orgNameCapitalized = orgNameWithoutDomain.charAt(0).toUpperCase() + orgNameWithoutDomain.slice(1);
+        identity = {
+            credentials: {
+                certificate: enrollment.certificate,
+                privateKey: enrollment.key.toBytes(),
+            },
+            mspId: `${orgNameCapitalized}MSP`,
+            type: 'X.509',
+        };
+
+        await wallet.put(identityLabel, identity);
 
     } catch (error) {
         console.error(`Failed to enroll user: ${error}`);
