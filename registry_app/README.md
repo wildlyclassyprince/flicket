@@ -4,20 +4,6 @@
 
 ## Adding user credentials to the wallet
 
-- Initialize `package.json`
-
-```bash
-npm init -y
-```
-
-- Add dependencies (if not added in previous step)
-
-```javascript
-"dependencies": {
-    "fabric-network": ">2.2.0"
-}
-```
-
 - Install
 
 ```bash
@@ -39,7 +25,8 @@ node submitTransaction.js 'User1@org1.example.com' initRegistry
 - Check the document existence by listing all documents available to `User1`
 
 ```bash
-node submitTransaction.js 'User1@org1.example.com' listDocuments
+node submitTransaction.js 'User1@org1.example.com' initRegistry
+node submitTransaction.js 'User1@org1.example.com' readDocument certificate doc-1
 ```
 
 ***
