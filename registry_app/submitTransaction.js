@@ -27,7 +27,7 @@ async function main() {
                 orgName,
                 `/connection-${orgNameWithoutDomain}.json`), 'utf-8'));
 
-        let connnectionOptions = {
+        let connectionOptions = {
             identity: identityLabel,
             wallet: wallet,
             discovery: {enables: true, asLocalhost: true}
@@ -40,7 +40,7 @@ async function main() {
         const network = await gateway.getNetwork('mychannel');
 
         console.log('Use Registry Contract.');
-        const contract = network.getContract('registry_chaincode');
+        const contract = network.getContract('registrycc'); // contract name is the parameter for 'getContract'
 
         console.log('Submit ' + functionName + ' transaction.');
         const response = await contract.submitTransaction(functionName, ...chaincodeArgs);
