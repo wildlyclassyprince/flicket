@@ -9,6 +9,14 @@ A mock implementation of a Hyperledger Fabric blockchain app for authenticating 
 
 The workflow above is bound to have you *pulling your hair* with typos and errors. To simplify things, use the following:
 
+Tear down artifacts & start the network:
+
+```bash
+./network.sh down && ./network.sh up createChannel -ca -s couchdb
+```
+
+Deploy the chaincode:
+
 ```bash
 $ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0 -cci initRegistry
 ```
@@ -19,38 +27,27 @@ Note, however, with this script you cannot define the `--label` flag because it 
 
 ***
 
-### Invoke
+### Invoke the chaincode using the client application
 
-`initRegistry` adds 2 documents to the ledger. We can fetch them using `readDocument`, which implements `getState`.
+While in the `test-network` folder, copy the client application and navigate to the folder:
 
 ```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"readDocument","Args":["certificate", "doc-1"]}'
+cp -r path-to-client-app/registry_app ../applications/
+pushd ~/go/src/github.com/hyperledger/fabric-samples/applications/registry_app
 ```
 
-Add another document:
-
+Add identities to the wallet:
 ```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"uploadDocument","Args":["doc-3","Just Another School", "Yet Another Comp-Sci", "Good Guy"]}'
+node addToWallet.js
 ```
 
-Check if the document exists:
+Invoke the chaincode using `User1@org1.example.com` by running `submitTransaction.js`:
 
 ```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"readDocument","Args":["certificate", "doc-3"]}'
-```
-
-Delete the document we just added:
-
-
-```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"deleteDocument","Args":["certificate", "doc-3"]}'
-```
-
-Read the history of the document:
-
-
-```bash
-$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n registryCC --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"getHistory","Args":["certificate", "doc-3"]}'
+node submitTransaction.js 'User1@org1.example.com' initRegistry
+node submitTransaction.js 'User1@org1.example.com' uploadDocument 'doc-3' 'Just Another School' 'Yet Another Comp-Sci Student' 'Good Guy'
+node submitTransaction.js 'User1@org1.example.com' deleteDocument 'certificate' 'doc-3'
+node submitTransaction.js 'User1@org1.example.com' getHistory 'certificate' 'doc-3'
 ```
 
 ***
