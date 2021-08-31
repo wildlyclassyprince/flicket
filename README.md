@@ -44,7 +44,7 @@ node addToWallet.js
 Invoke the chaincode using `User1@org1.example.com` by running `submitTransaction.js`:
 
 ```bash
-node submitTransaction.js 'User1@org1.example.com' initRegistry
+node submitTransaction.js 'User1@org1.example.com' getDocumentsByType 'certificate'
 node submitTransaction.js 'User1@org1.example.com' uploadDocument 'doc-3' 'Just Another School' 'Yet Another Comp-Sci Student' 'Good Guy'
 node submitTransaction.js 'User1@org1.example.com' deleteDocument 'certificate' 'doc-3'
 node submitTransaction.js 'User1@org1.example.com' getHistory 'certificate' 'doc-3'
