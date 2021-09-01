@@ -31,7 +31,7 @@ $ popd
 Deploy the chaincode:
 
 ```bash
-$ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0 -cci initRegistry
+$ ./network.sh deployCC -ccn registryCC -ccp path-to-file/registry_chaincode -ccl javascript -ccv 1.0 -cci initRegistry -ccep "AND('Org1.member', 'Org2.member', 'Org3.member')"
 ```
 
 It accomplishes the same goals as the longer workflow in the `HOW-TO.md` file.
