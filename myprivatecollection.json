@@ -1,0 +1,12 @@
+{
+    "name": "twoOrgsPrivateCollection",
+    "policy": "OR('Org1MSP.member', 'Org3MSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 2,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true,
+    "endorsementPolicy": {
+        "signaturePolicy": "AND('Org1MSP.member', 'Org3MSP.member')"
+    }
+}
