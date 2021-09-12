@@ -1,4 +1,4 @@
-## How-to
+# How-to
 
 This is the long version chaincode lifecycle deployment and invocation document.
 
@@ -180,3 +180,18 @@ $ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.e
 ```
 
 ***
+
+## Private Data
+
+Disseminating private data follows the same steps:
+>1. Package
+>2. Install
+>3. Approve
+>4. Commit
+>5. Invoke
+
+However, for the commit stage, we need to provide a private data collection to the flag `--collections-config`:
+
+```bash
+$ peer lifecycle chaincode commit -o localhost:7050 -C mychannel --name registrycc --version 1.0 --sequence 1 --collections-config myprivatecollection.json
+```
